@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour {
         if (_isPlaying)
         {
             CheckNextNotes();
-            //scoreText.text = _score.ToString();
+            scoreText.text = _score.ToString();
         }
     }
 
@@ -85,5 +85,12 @@ public class GameManager : MonoBehaviour {
     float GetMusicTime()
     {
         return Time.time - _startTime;
+    }
+
+    public void GoodTimingFunc(int num)
+    {
+        Debug.Log("Line:" + num + "good!");
+        Debug.Log(GetMusicTime());
+        _score++;
     }
 }
