@@ -9,13 +9,14 @@ public class Notes : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        speed = -0.5f;
+        //speed = -0.5f;
         _gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        speed = _gameManager.noteSpeed;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        transform.position += Vector3.down * 10 * Time.deltaTime;
+        transform.position += Vector3.down * speed * Time.deltaTime;
         if(this.transform.position.y < -5.0f)
         {
             Debug.Log("false");

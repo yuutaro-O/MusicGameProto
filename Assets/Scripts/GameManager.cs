@@ -23,9 +23,15 @@ public class GameManager : MonoBehaviour {
     public GameObject startButton;
     public Text scoreText;
 
+    public float spawnLine = 7.0f;
+    GameObject judgeLine;
+    float DistanceSpawnToJudge;
+    public float noteSpeed;
+
 	// Use this for initialization
 	void Start () {
         _audioSource = GameObject.Find("GameMusic").GetComponent<AudioSource>();
+        judgeLine = GameObject.FindWithTag("JudgeLine");
         _timing = new float[1024];
         _lineNum = new int[1024];
         LoadCSV();
@@ -42,7 +48,10 @@ public class GameManager : MonoBehaviour {
 
     public void StartGame()
     {
+        
         startButton.SetActive(false);
+        DistanceSpawnToJudge = Mathf.Sqrt((spawnLine - judgeLine.transform.position.y) * (spawnLine - judgeLine.transform.position.y));
+        noteSpeed = DistanceSpawnToJudge / 2.0f;
         _startTime = Time.time;
         _audioSource.Play();
         _isPlaying = true;
@@ -50,7 +59,7 @@ public class GameManager : MonoBehaviour {
 
     void CheckNextNotes()
     {
-        while(_timing [_notesCount] + timeOffset < GetMusicTime() && _timing[_notesCount] != 0)
+        while(_timing [_notesCount] + timeOffset - 2.0f < GetMusicTime() && _timing[_notesCount] != 0)
         {
             SpawnNotes(_lineNum[_notesCount]);
             _notesCount++;
@@ -60,7 +69,7 @@ public class GameManager : MonoBehaviour {
     void SpawnNotes(int num)
     {
         Instantiate(notes[num],
-            new Vector3(-4.0f + (2.0f * num), 10.0f, 0),
+            new Vector3(-4.0f + (2.0f * num), spawnLine, 0),
             Quaternion.identity);
     }
 
