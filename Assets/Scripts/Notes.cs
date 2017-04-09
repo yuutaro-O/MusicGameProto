@@ -6,6 +6,18 @@ public class Notes : MonoBehaviour {
     float speed { get; set; }
     public int lineNum;
     private GameManager _gameManager { get; set; }
+    private float m_noteSecond;
+    public float noteSecond
+    {
+        get
+        {
+            return m_noteSecond;
+        }
+        set
+        {
+            m_noteSecond = value;
+        }
+    }
 
 	// Use this for initialization
 	void Start () {
@@ -19,14 +31,16 @@ public class Notes : MonoBehaviour {
         transform.position += Vector3.down * speed * Time.deltaTime;
         if(this.transform.position.y < -5.0f)
         {
-            Debug.Log("false");
+            _gameManager.NotesTimingFunc(lineNum, JUDGERES.POOR);
             Destroy(this.gameObject);
         }
 	}
-
+    /*判定線に入った時に、キーが押されているかを検出
+     * 
+     */
     private void OnTriggerStay(Collider other)
     {
-        Debug.Log("Call");
+        //Debug.Log("Call");
         switch (lineNum)
         {
             case 0:
@@ -48,12 +62,59 @@ public class Notes : MonoBehaviour {
                 break;
         }
     }
-
+    /*入力を検出し、判定を行う
+     * 
+     */
     void CheckInput(KeyCode key)
     {
+        float musicTime = _gameManager.GetMusicTime();
+        float frameSecond = _gameManager.m_frameSecond;
+        
         if (Input.GetKeyDown(key))
         {
-            _gameManager.GoodTimingFunc(lineNum);
+            JUDGERES judge = JUDGERES.POOR;
+            //押されるべきタイミングより遅く押されたか、同時の場合
+            if (noteSecond >= musicTime) 
+            {
+                if (noteSecond <= musicTime + (_gameManager.m_frameSecond * _gameManager.GetJudgeDifference(JUDGERES.PERFECT)))    //parfect
+                {
+                    judge = JUDGERES.PERFECT;
+                }
+                else if (noteSecond <= musicTime + (_gameManager.m_frameSecond * _gameManager.GetJudgeDifference(JUDGERES.GREAT)))   //great
+                {
+                    judge = JUDGERES.GREAT;
+                }
+                else if (noteSecond <= musicTime + (_gameManager.m_frameSecond * _gameManager.GetJudgeDifference(JUDGERES.GOOD)))  //good
+                {
+                    judge = JUDGERES.GOOD;
+                }
+                else{
+                    judge = JUDGERES.POOR;
+                }
+            }
+
+            //押されるべきタイミングより早く押された場合
+            else
+            {
+                if (noteSecond >= musicTime - (_gameManager.m_frameSecond * _gameManager.GetJudgeDifference(JUDGERES.PERFECT)))    //parfect
+                {
+                    judge = JUDGERES.PERFECT;
+                }
+                else if (noteSecond >= musicTime - (_gameManager.m_frameSecond * _gameManager.GetJudgeDifference(JUDGERES.GREAT)))   //great
+                {
+                    judge = JUDGERES.GREAT;
+                }
+                else if (noteSecond >= musicTime - (_gameManager.m_frameSecond * _gameManager.GetJudgeDifference(JUDGERES.GOOD)))  //good
+                {
+                    judge = JUDGERES.GOOD;
+                }
+                else
+                {
+                    judge = JUDGERES.POOR;
+                }
+            }
+
+            _gameManager.NotesTimingFunc(lineNum,judge);
             Destroy(this.gameObject);
         }
     }
