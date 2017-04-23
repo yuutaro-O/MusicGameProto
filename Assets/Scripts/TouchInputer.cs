@@ -6,6 +6,18 @@ public class TouchInputer : MonoBehaviour {
     Touch m_dummyTouch;
     bool m_isEnableDummyTouch;
     Touch[] m_touchDatas;
+    Camera ref_MainCamera;
+    
+    GameObject m_laycasterObject;
+    RaycasterObject m_raycasterObjectComponent;
+    [SerializeField]
+    GameObject Pre_laycasterObject;
+
+
+    //<-- Debug objects
+    [SerializeField]
+    UnityEngine.UI.Text deb_touchpostext;
+    //!Debug objects-->
     public bool IsEnableDummyTouch {
         get
         {
@@ -27,6 +39,9 @@ public class TouchInputer : MonoBehaviour {
             default:
                 break;
         }
+        ref_MainCamera = Camera.main;
+        m_laycasterObject = Instantiate(Pre_laycasterObject);
+        m_raycasterObjectComponent = m_laycasterObject.GetComponent<RaycasterObject>();
         
     }
 	
@@ -36,7 +51,7 @@ public class TouchInputer : MonoBehaviour {
         if (IsEnableDummyTouch == true)
         {
             MouseToTouchInput();
-            m_touchDatas[0] = m_dummyTouch;
+            
         }
         else
         {
@@ -45,6 +60,12 @@ public class TouchInputer : MonoBehaviour {
 
 		foreach(Touch touchData in m_touchDatas)
         {
+            Vector3 t_touchdataPosition;
+            RaycastHit t_raycastHit;
+            deb_touchpostext.text = m_touchDatas[0].position.ToString();
+            t_touchdataPosition = ref_MainCamera.ScreenToWorldPoint(new Vector3(touchData.position.x, touchData.position.y, 10));
+            t_raycastHit =  m_raycasterObjectComponent.Raycast(t_touchdataPosition, Vector3.up);
+            Debug.Log(t_raycastHit.rigidbody);
             Debug.Log("touch");
             Debug.Log("touchPosition = " + touchData.position);
         }
@@ -61,6 +82,7 @@ public class TouchInputer : MonoBehaviour {
             if (Input.GetMouseButtonDown(0))
             {
                 m_dummyTouch.phase = TouchPhase.Began;
+                m_touchDatas = new Touch[1];
             }
             else
             {
@@ -78,6 +100,14 @@ public class TouchInputer : MonoBehaviour {
             }
             
             m_dummyTouch.position = Input.mousePosition;
+            m_touchDatas[0] = m_dummyTouch;
+        }
+        else
+        {
+            if(m_touchDatas.Length == 1)
+            {
+                m_touchDatas = new Touch[0];
+            }
         }
     }
 }
