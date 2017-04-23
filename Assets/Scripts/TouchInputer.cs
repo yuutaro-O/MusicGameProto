@@ -60,14 +60,21 @@ public class TouchInputer : MonoBehaviour {
 
 		foreach(Touch touchData in m_touchDatas)
         {
-            Vector3 t_touchdataPosition;
-            RaycastHit t_raycastHit;
-            deb_touchpostext.text = m_touchDatas[0].position.ToString();
-            t_touchdataPosition = ref_MainCamera.ScreenToWorldPoint(new Vector3(touchData.position.x, touchData.position.y, 10));
-            t_raycastHit =  m_raycasterObjectComponent.Raycast(t_touchdataPosition, Vector3.up);
-            Debug.Log(t_raycastHit.rigidbody);
-            Debug.Log("touch");
-            Debug.Log("touchPosition = " + touchData.position);
+            if (touchData.phase == TouchPhase.Began)
+            {
+                Vector3 t_touchdataPosition;
+                RaycastHit t_raycastHit;
+                deb_touchpostext.text = m_touchDatas[0].position.ToString();
+                t_touchdataPosition = ref_MainCamera.ScreenToWorldPoint(new Vector3(touchData.position.x, touchData.position.y, 10));
+                t_raycastHit = m_raycasterObjectComponent.Raycast(t_touchdataPosition, Vector3.up);
+                if (t_raycastHit.collider != null)
+                {
+                    t_raycastHit.rigidbody.gameObject.GetComponent<Notes>().Judge();
+                }
+                Debug.Log(t_raycastHit.rigidbody);
+                Debug.Log("touch");
+                Debug.Log("touchPosition = " + touchData.position);
+            }
         }
             
 	}
