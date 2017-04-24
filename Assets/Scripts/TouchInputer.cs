@@ -13,11 +13,6 @@ public class TouchInputer : MonoBehaviour {
     [SerializeField]
     GameObject Pre_laycasterObject;
 
-
-    //<-- Debug objects
-    [SerializeField]
-    UnityEngine.UI.Text deb_touchpostext;
-    //!Debug objects-->
     public bool IsEnableDummyTouch {
         get
         {
@@ -28,7 +23,10 @@ public class TouchInputer : MonoBehaviour {
     void Awake() {
         switch (Application.platform)
         {
+            //エディタ起動の場合
             case RuntimePlatform.WindowsEditor:
+            case RuntimePlatform.OSXEditor:
+            case RuntimePlatform.LinuxEditor:
                 m_isEnableDummyTouch = true;
                 m_touchDatas = new Touch[1];
                 break;
@@ -64,7 +62,6 @@ public class TouchInputer : MonoBehaviour {
             {
                 Vector3 t_touchdataPosition;
                 RaycastHit t_raycastHit;
-                deb_touchpostext.text = m_touchDatas[0].position.ToString();
                 t_touchdataPosition = ref_MainCamera.ScreenToWorldPoint(new Vector3(touchData.position.x, touchData.position.y, 10));
                 t_raycastHit = m_raycasterObjectComponent.Raycast(t_touchdataPosition, Vector3.up);
                 if (t_raycastHit.collider != null)
