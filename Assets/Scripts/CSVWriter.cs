@@ -10,11 +10,16 @@ public class CSVWriter : MonoBehaviour {
  //       WriteCSV("Hello,World");
 	//}
 
+    public void ChangeFilename(string filepass)
+    {
+        fileName = filepass;
+    }
+
     public void WriteCSV(string txt)
     {
         StreamWriter streamWriter;
         FileInfo fileInfo;
-        fileInfo = new FileInfo(Application.dataPath + "/" + fileName + ".csv");
+        fileInfo = new FileInfo(Application.dataPath + "/Resources/" + fileName + ".csv");
         streamWriter = fileInfo.AppendText();
         streamWriter.WriteLine(txt);
         streamWriter.Flush();

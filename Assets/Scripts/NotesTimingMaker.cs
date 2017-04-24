@@ -9,30 +9,25 @@ public class NotesTimingMaker : MonoBehaviour {
 
     private bool _isPlaying = false;
     public GameObject startButton;
+    private GameManager ref_GameManager;
 
 	// Use this for initialization
 	void Start () {
+
         _audioSource = GameObject.Find("GameMusic").GetComponent<AudioSource>();
         _CSVWriter = GameObject.Find("CSVWriter").GetComponent<CSVWriter>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        if (_isPlaying)
-        {
-            DetectKeys();
-        }
+        ref_GameManager = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
 	}
 
     public void StartMusic()
     {
         startButton.SetActive(false);
         _audioSource.Play();
-        _startTime = Time.time;
+        _startTime = ref_GameManager.startTime;
         _isPlaying = true;
     }
 
-    void DetectKeys()
+    public void DetectKeys()
     {
         if (Input.GetKeyDown(KeyCode.D))
         {
@@ -64,5 +59,10 @@ public class NotesTimingMaker : MonoBehaviour {
     float GetTiming()
     {
         return Time.time - _startTime;
+    }
+
+    public void ChangeCSVFilepass(string filePass)
+    {
+        _CSVWriter.ChangeFilename(filePass);
     }
 }
