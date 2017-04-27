@@ -6,16 +6,24 @@ using System.IO;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
-    public GameObject[] notes;      //生成させるノーツを格納
+    
     private float[] _timing;        //生成タイミングを格納
     private int[] _lineNum;         
 
     public string filePass;
     private int _notesCount = 0;
+    //成績系
     private int _score;
+    //判定の基準時間　フレーム単位
+    float[] m_judgeDifference = new float[4];
+    public float GetJudgeDifference(JUDGERES judgeRes)
+    {
+        return m_judgeDifference[(int)judgeRes];
+    }
+    //判定結果の格納配列
     private int[] judgeCount = new int[sizeof(JUDGERES)];
 
-    private AudioSource _audioSource;
+    
     private float _startTime = 0;
     public float startTime
     {
@@ -28,11 +36,9 @@ public class GameManager : MonoBehaviour {
     public float timeOffset = -1;
 
     private bool _isPlaying = false;
-    public GameObject startButton;
-    public Text scoreText;
 
     public float spawnLine = 7.0f;
-    GameObject judgeLine;
+    
     float DistanceSpawnToJudge;
     public float noteSpeed;
     GameObject t_note;
@@ -42,13 +48,8 @@ public class GameManager : MonoBehaviour {
     private float FinishInteval = 3.0f;
     public float m_frameSecond;
     float noteSpeedSecond = 2.0f;   //何秒で判定ラインに到達する？
-    float[] m_judgeDifference = new float[4];
-    public float GetJudgeDifference(JUDGERES judgeRes)
-    {
-        return m_judgeDifference[(int)judgeRes];
-    }
-
-    [SerializeField]
+    
+    //曲の譜面ズレを吸収する時間　秒単位
     float m_GlobalOffsetSecond = 0.0f;
     public float GlobalOffsetSecond
     {
@@ -57,6 +58,15 @@ public class GameManager : MonoBehaviour {
             return m_GlobalOffsetSecond;
         }
     }
+    //プレハブ系
+    public GameObject[] notes;      //生成させるノーツを格納
+    //参照系
+    GameObject judgeLine;
+    [SerializeField]
+    GameObject startButton;
+    [SerializeField]
+    Text scoreText;
+    private AudioSource _audioSource;
     //判定結果を表示するスプライト
     [SerializeField]
     Sprite[] ref_judgeSprite;
